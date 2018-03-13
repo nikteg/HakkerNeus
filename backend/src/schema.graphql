@@ -1,0 +1,21 @@
+type Query {
+  items: [Item!]
+}
+
+enum ItemType {
+  job
+  story
+  comment
+  poll
+  pollopt
+}
+
+type Item {
+  by: String
+  type: ItemType
+  id: Int!
+  url: String
+  text: String
+  title: String
+  kids: [Item!]
+}
