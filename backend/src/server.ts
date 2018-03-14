@@ -3,6 +3,7 @@ import * as koaRouter from "koa-router";
 import * as koaBody from "koa-bodyparser";
 import * as DataLoader from "dataloader";
 import fetch from "node-fetch";
+import * as _ from "lodash";
 import { graphqlKoa, graphiqlKoa } from "apollo-server-koa";
 import { importSchema } from "graphql-import";
 import { makeExecutableSchema } from "graphql-tools";
@@ -20,7 +21,8 @@ const typeDefs = importSchema("./src/schema.graphql");
 const resolvers = {
   Query: {
     async items() {
-      return itemsLoader.loadMany(await fetchItems());
+      const ids: number[] = _.take(await fetchItems(), 10);
+      return itemsLoader.loadMany(ids);
     },
   },
   Item: {
