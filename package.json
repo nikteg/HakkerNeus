@@ -8,14 +8,20 @@
     "tsc": "tsc"
   },
   "dependencies": {
+    "apollo-client-preset": "^1.0.8",
+    "graphql": "^0.13.1",
+    "graphql-tag": "^2.8.0",
     "react": "^16.3.0-alpha.1",
+    "react-apollo": "^2.0.4",
     "react-native": "0.54.2",
+    "react-navigation": "^1.5.7",
     "styled-components": "^3.2.2",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
     "@types/react": "^16.0.40",
     "@types/react-native": "^0.52.17",
+    "@types/react-navigation": "^1.2.1",
     "babel-jest": "22.4.1",
     "babel-preset-react-native": "4.0.0",
     "jest": "22.4.2",

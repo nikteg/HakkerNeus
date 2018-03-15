@@ -1,20 +1,50 @@
 import * as React from "react";
-import { FlatList } from "react-native";
+import { FlatList, View, Text } from "react-native";
 import styled from "styled-components/native";
-
-const LIST = [0, 1, 2, 3, 4, 5];
+import { graphql, QueryProps } from "react-apollo";
+import gql from "graphql-tag";
 
 const ListItem = styled.Text`
   padding: 10px;
-  color: red;
 `;
 
-export const ListView = () => (
-  <FlatList
-    data={LIST}
-    keyExtractor={(i) => i.toString()}
-    renderItem={({ item, index, separators }) => (
-      <ListItem key={index}>{item}</ListItem>
-    )}
-  />
-);
+function ListView(props: CombinedProps) {
+  return (
+    <FlatList
+      data={props.items}
+      keyExtractor={(i) => String(i.id)}
+      renderItem={({ item, index, separators }) => (
+        <ListItem onPress={() => props.onPress(item.url)}>{item.title}</ListItem>
+      )}
+    />
+  );
+}
+
+type Item = {
+  id: number;
+  title: string;
+  url: string;
+};
+
+type Response = {
+  items: Item[];
+};
+
+type Props = {
+  onPress: (uri: string) => void;
+};
+
+const ListViewConnected = graphql<Response, Props>(
+  gql`
+    query ListViewQuery {
+      items {
+        id
+        title
+        url
+      }
+    }
+  `,
+  { props: ({ data }) => ({ ...data }) },
+)(ListView);
+
+export default ListViewConnected;
