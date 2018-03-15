@@ -1,5 +1,5 @@
 type Query {
-  items: [Item!]
+  items(limit: Int): [Item!]
 }
 
 enum ItemType {
@@ -11,11 +11,17 @@ enum ItemType {
 }
 
 type Item {
-  by: String
+  by: User
   type: ItemType
   id: Int!
   url: String
   text: String
   title: String
+  descendants: Int!
   kids: [Item!]
+}
+
+type User {
+  id: String!
+  karma: Int!
 }

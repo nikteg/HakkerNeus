@@ -4,6 +4,7 @@ import * as koaBody from "koa-bodyparser";
 import * as DataLoader from "dataloader";
 import fetch from "node-fetch";
 import * as _ from "lodash";
+import * as CachingProxy from "caching-proxy";
 import { graphqlKoa, graphiqlKoa } from "apollo-server-koa";
 import { importSchema } from "graphql-import";
 import { makeExecutableSchema } from "graphql-tools";
@@ -12,20 +13,29 @@ const app = new koa();
 const router = new koaRouter();
 const PORT = 3000;
 
+const proxy = new CachingProxy({
+  port: 4000,
+  dir: "./cached-data",
+});
+
 // koaBody is needed just for POST.
 app.use(koaBody());
 
 const itemsLoader = new DataLoader<number, object>((keys) => Promise.all(keys.map((key) => fetchItem(key))));
+const userLoader = new DataLoader<string, object>((keys) => Promise.all(keys.map((key) => fetchUser(key))));
 
 const typeDefs = importSchema("./src/schema.graphql");
 const resolvers = {
   Query: {
-    async items() {
-      const ids: number[] = _.take(await fetchItems(), 10);
+    async items(root, { limit = 10 }) {
+      const ids: number[] = _.take(await fetchItems(), Math.min(15, limit));
       return itemsLoader.loadMany(ids);
     },
   },
   Item: {
+    async by(root, args) {
+      return root.by ? userLoader.load(root.by) : null;
+    },
     async kids(root, args) {
       return root.kids ? itemsLoader.loadMany(root.kids) : null;
     },
@@ -38,7 +48,8 @@ router.post("/graphql", graphqlKoa({ schema }));
 router.get("/graphql", graphqlKoa({ schema }));
 
 function fetchJSON(url: string) {
-  return fetch(url).then((res) => res.json());
+  const cachedUrl = url.replace("https://", "http://localhost:4000/https/");
+  return fetch(cachedUrl).then((res) => res.json());
 }
 
 function fetchItems() {
@@ -47,6 +58,10 @@ function fetchItems() {
 
 function fetchItem(key: number) {
   return fetchJSON(`https://hacker-news.firebaseio.com/v0/item/${key}.json`);
+}
+
+function fetchUser(key: string) {
+  return fetchJSON(`https://hacker-news.firebaseio.com/v0/user/${key}.json`);
 }
 
 // Setup the /graphiql route to show the GraphiQL UI
