@@ -29,8 +29,8 @@ const userLoader = new DataLoader<string, object>((keys) => Promise.all(keys.map
 const typeDefs = importSchema("./src/schema.graphql");
 const resolvers = {
   Query: {
-    async items(root, { limit = 10 }) {
-      const ids: number[] = _.take(await fetchItems(), Math.min(15, limit));
+    async items(root, { limit = 20 }) {
+      const ids: number[] = _.take(await fetchItems(), Math.min(20, limit));
       return itemsLoader.loadMany(ids);
     },
   },
