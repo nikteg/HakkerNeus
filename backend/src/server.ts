@@ -51,7 +51,7 @@ router.get("/graphql", graphqlKoa({ schema }));
 
 function fetchJSON(url: string) {
   const cachedUrl = url.replace("https://", "http://localhost:4000/https/");
-  return fetch(cachedUrl).then((res) => res.json());
+  return fetch(url).then((res) => res.json());
 }
 
 function fetchItems() {
