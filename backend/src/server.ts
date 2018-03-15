@@ -9,6 +9,8 @@ import { graphqlKoa, graphiqlKoa } from "apollo-server-koa";
 import { importSchema } from "graphql-import";
 import { makeExecutableSchema } from "graphql-tools";
 
+require("dotenv").config();
+
 const app = new koa();
 const router = new koaRouter();
 const PORT = 3000;
@@ -71,6 +73,26 @@ router.get(
     endpointURL: "/graphql", // a POST endpoint that GraphiQL will make the actual requests to
   }),
 );
+
+router.get("/readability", async (ctx) => {
+  const init = {
+    method: "GET",
+    headers: { "x-api-key": process.env.MERCURY_API_KEY },
+  };
+
+  const url = ctx.request.query.url;
+
+  const data = await fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init).then((r) =>
+    r.text(),
+  );
+
+  const responseInit = {
+    headers: { "Content-Type": "application/json" },
+  };
+
+  ctx.response.append("Content-Type", "application/json");
+  ctx.response.body = data;
+});
 
 app.use(router.routes());
 app.use(router.allowedMethods());
