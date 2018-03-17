@@ -1,7 +1,8 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { ScrollView, Dimensions } from "react-native";
+import { ScrollView, Text, Dimensions, Linking } from "react-native";
 import HTML from "react-native-render-html";
+import { Item } from "../ListView";
 
 type Props = {
   uri: string;
@@ -28,7 +29,18 @@ interface ReadableResponse {
   rendered_pages: number;
 }
 
+interface ErrorResponse {
+  error: string;
+}
+
 const padding = 24;
+
+function errorHTML(error: string, item: Item) {
+  return `
+    <div>Error: ${error}</div>
+    <div>Go to <a href="${item.url}">link</a></div>
+  `;
+}
 
 export default class ReaderScreen extends React.Component<Props & NavigationScreenProps, State> {
   state: State = {
@@ -36,22 +48,27 @@ export default class ReaderScreen extends React.Component<Props & NavigationScre
   };
 
   componentWillMount() {
-    const { uri } = this.props.navigation.state.params;
-    const readableUri = `http://localhost:3000/readability/?url=${encodeURIComponent(uri)}`;
+    const { item } = this.props.navigation.state.params;
+    const readableUrl = `http://localhost:3000/readability/?url=${encodeURIComponent(item.url)}`;
 
-    fetch(readableUri)
-      .then((res) => res.json())
-      .then((res: ReadableResponse) => this.setState({ html: res.content }));
+    fetch(readableUrl)
+      .then((res) => (res.status === 200 ? res.json() : Promise.reject(res)))
+      .then((res: ReadableResponse) => this.setState({ html: res.content }))
+      .catch((res: Response) => res.json())
+      .then((res: ErrorResponse) => this.setState({ html: errorHTML(res.error, item) }));
   }
 
   render() {
+    const { item } = this.props.navigation.state.params;
     const { html } = this.state;
     return (
       <ScrollView style={{ flex: 1 }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 24, marginBottom: 0 }}>{item.title}</Text>
         <HTML
           html={html}
           imagesMaxWidth={Dimensions.get("window").width - padding * 2}
           containerStyle={{ padding: padding }}
+          onLinkPress={(evt, href) => Linking.openURL(href)}
         />
       </ScrollView>
     );

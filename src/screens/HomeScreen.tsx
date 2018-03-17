@@ -8,7 +8,7 @@ import { NavigationScreenProps } from "react-navigation";
 // @ts-ignore
 import * as packageJson from "../../package.json";
 
-import ListView from "../ListView";
+import ListView, { Item } from "../ListView";
 
 const client = new ApolloClient({
   // By default, this client will send queries to the
@@ -27,7 +27,7 @@ export default class HomeScreen extends React.Component<NavigationScreenProps> {
   render() {
     return (
       <ApolloProvider client={client}>
-        <ListView onPress={(uri: string) => this.props.navigation.navigate("Reader", { uri })} />
+        <ListView onPress={(item: Item) => this.props.navigation.navigate("Reader", { item })} />
       </ApolloProvider>
     );
   }

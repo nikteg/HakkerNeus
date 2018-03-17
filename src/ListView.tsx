@@ -14,13 +14,13 @@ function ListView(props: Response & Props) {
       data={props.items}
       keyExtractor={(i) => String(i.id)}
       renderItem={({ item, index, separators }) => (
-        <ListItem onPress={() => props.onPress(item.url)}>{item.title}</ListItem>
+        <ListItem onPress={() => props.onPress(item)}>{item.title}</ListItem>
       )}
     />
   );
 }
 
-type Item = {
+export type Item = {
   id: number;
   title: string;
   url: string;
@@ -31,7 +31,7 @@ type Response = {
 };
 
 type Props = {
-  onPress: (uri: string) => void;
+  onPress: (item: Item) => void;
 };
 
 const ListViewConnected = graphql<Response, Props>(
