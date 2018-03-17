@@ -74,21 +74,19 @@ router.get(
   }),
 );
 
-router.get("/readability", async (ctx) => {
+function fetchReadability(url: string) {
   const init = {
     method: "GET",
     headers: { "x-api-key": process.env.MERCURY_API_KEY },
   };
 
+  return fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init).then((res) => res.text());
+}
+
+router.get("/readability", async (ctx) => {
   const url = ctx.request.query.url;
 
-  const data = await fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init).then((r) =>
-    r.text(),
-  );
-
-  const responseInit = {
-    headers: { "Content-Type": "application/json" },
-  };
+  const data = await fetchReadability(url);
 
   ctx.response.append("Content-Type", "application/json");
   ctx.response.body = data;
