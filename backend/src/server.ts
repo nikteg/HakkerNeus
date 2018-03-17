@@ -80,16 +80,27 @@ function fetchReadability(url: string) {
     headers: { "x-api-key": process.env.MERCURY_API_KEY },
   };
 
-  return fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init).then((res) => res.text());
+  return fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init)
+    .then((res) => (res.status === 200 ? res.text() : res.json().then((json) => Promise.reject(json))))
+    .then((text) => {
+      const json = JSON.parse(text);
+      return json.error ? Promise.reject(json.messages) : Promise.resolve(text);
+    })
+    .catch((error) => Promise.reject("Could not parse content"));
 }
 
 router.get("/readability", async (ctx) => {
-  const url = ctx.request.query.url;
+  const url = ctx.query.url;
 
-  const data = await fetchReadability(url);
-
-  ctx.response.append("Content-Type", "application/json");
-  ctx.response.body = data;
+  try {
+    const data = await fetchReadability(url);
+    ctx.append("Content-Type", "application/json");
+    ctx.body = data;
+  } catch (error) {
+    console.error(url, error);
+    ctx.status = 400;
+    ctx.body = { error };
+  }
 });
 
 app.use(router.routes());
