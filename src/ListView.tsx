@@ -8,7 +8,7 @@ const ListItem = styled.Text`
   padding: 10px;
 `;
 
-function ListView(props: CombinedProps) {
+function ListView(props: Response & Props) {
   return (
     <FlatList
       data={props.items}
