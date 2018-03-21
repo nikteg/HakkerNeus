@@ -9,17 +9,21 @@
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
+    "fast-html-parser": "^1.0.1",
     "graphql": "^0.13.1",
     "graphql-tag": "^2.8.0",
+    "he": "^1.1.1",
     "react": "^16.3.0-alpha.1",
     "react-apollo": "^2.0.4",
     "react-native": "0.54.2",
     "react-native-render-html": "^3.9.0",
     "react-navigation": "^1.5.7",
     "styled-components": "^3.2.2",
-    "tslib": "^1.9.0"
+    "tslib": "^1.9.0",
+    "util": "^0.10.3"
   },
   "devDependencies": {
+    "@types/jest": "^22.2.0",
     "@types/react": "^16.0.40",
     "@types/react-native": "^0.52.17",
     "@types/react-navigation": "^1.2.1",
@@ -29,9 +33,21 @@
     "prettier": "^1.11.1",
     "react-native-typescript-transformer": "^1.2.3",
     "react-test-renderer": "^16.3.0-alpha.1",
+    "ts-jest": "^22.4.2",
     "typescript": "^2.7.2"
   },
   "jest": {
-    "preset": "react-native"
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

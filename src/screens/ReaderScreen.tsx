@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { ScrollView, Text, Dimensions, Linking } from "react-native";
-import HTML from "react-native-render-html";
+import { ScrollView, Text, View, Dimensions, Linking, Platform } from "react-native";
+import HTMLRenderer from "../common/HTMLRenderer";
 import { Item } from "../ListView";
 
 type Props = {
@@ -35,6 +35,20 @@ interface ErrorResponse {
 
 const padding = 24;
 
+const tagsStyles = {
+  code: {
+    fontFamily: Platform.select({ ios: "Menlo", android: "monospace" }),
+  },
+};
+
+const renderers = {
+  pre: (htmlAttibs, children, convertedCSSStyles, passProps) => {
+    console.log(htmlAttibs, children, convertedCSSStyles, passProps);
+
+    return children;
+  },
+};
+
 function errorHTML(error: string, item: Item) {
   return `
     <div>Error: ${error}</div>
@@ -44,7 +58,7 @@ function errorHTML(error: string, item: Item) {
 
 export default class ReaderScreen extends React.Component<Props & NavigationScreenProps, State> {
   state: State = {
-    html: "Loading...",
+    html: "<div>Loading...</div>",
   };
 
   componentWillMount() {
@@ -64,12 +78,7 @@ export default class ReaderScreen extends React.Component<Props & NavigationScre
     return (
       <ScrollView style={{ flex: 1 }}>
         <Text style={{ fontSize: 24, fontWeight: "bold", margin: 24, marginBottom: 0 }}>{item.title}</Text>
-        <HTML
-          html={html}
-          imagesMaxWidth={Dimensions.get("window").width - padding * 2}
-          containerStyle={{ padding: padding }}
-          onLinkPress={(evt, href) => Linking.openURL(href)}
-        />
+        <HTMLRenderer html={html} style={{ padding }} />
       </ScrollView>
     );
   }
