@@ -12,6 +12,8 @@ function ListView(props: Response & Props) {
   return (
     <FlatList
       data={props.items}
+      refreshing={props.loading}
+      onRefresh={props.refetch}
       keyExtractor={(i) => String(i.id)}
       renderItem={({ item, index, separators }) => (
         <ListItem onPress={() => props.onPress(item)}>{item.title}</ListItem>
