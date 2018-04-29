@@ -45,7 +45,7 @@ class CommentsScreen extends React.Component<Props> {
       const { item: { kids } } = this.props;
       return <ScrollView style={{ backgroundColor: "#eee" }}>{this.renderKids(kids)}</ScrollView>;
     } else {
-      return "loading";
+      return <Text>loading</Text>;
     }
   }
 }
