@@ -4,21 +4,18 @@ import * as koaBody from "koa-bodyparser";
 import * as DataLoader from "dataloader";
 import fetch from "node-fetch";
 import * as _ from "lodash";
-import * as CachingProxy from "caching-proxy";
 import { graphqlKoa, graphiqlKoa } from "apollo-server-koa";
 import { importSchema } from "graphql-import";
 import { makeExecutableSchema } from "graphql-tools";
+import { JSDOM } from "jsdom";
+import { Item } from "./typings/api";
+import { storyLoader, commentAttributes } from "./resources/comments";
 
 require("dotenv").config();
 
 const app = new koa();
 const router = new koaRouter();
 const PORT = 3000;
-
-const proxy = new CachingProxy({
-  port: 4000,
-  dir: "./cached-data",
-});
 
 // koaBody is needed just for POST.
 app.use(koaBody());
@@ -33,8 +30,28 @@ const resolvers = {
       const ids: number[] = _.take(await fetchItems(), Math.min(20, limit));
       return itemsLoader.loadMany(ids);
     },
+    async item(root, { id }) {
+      return itemsLoader.load(id);
+    },
   },
   Item: {
+    __resolveType(obj) {
+      if (obj.type === "comment") {
+        return "Comment";
+      }
+
+      return "Story";
+    },
+  },
+  Comment: {
+    async by(root, args) {
+      return root.by ? userLoader.load(root.by) : null;
+    },
+    async kids(root, args) {
+      return root.kids ? itemsLoader.loadMany(root.kids) : null;
+    },
+  },
+  Story: {
     async by(root, args) {
       return root.by ? userLoader.load(root.by) : null;
     },
@@ -49,17 +66,31 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 router.post("/graphql", graphqlKoa({ schema }));
 router.get("/graphql", graphqlKoa({ schema }));
 
-function fetchJSON(url: string) {
+async function fetchJSON<T = any>(url: string): Promise<T> {
   const cachedUrl = url.replace("https://", "http://localhost:4000/https/");
-  return fetch(url).then((res) => res.json());
+  const json = await fetch(url).then((res) => res.json());
+  // console.log(JSON.stringify(json, null, 2));
+
+  return json;
 }
 
 function fetchItems() {
   return fetchJSON("https://hacker-news.firebaseio.com/v0/topstories.json");
 }
 
-function fetchItem(key: number) {
-  return fetchJSON(`https://hacker-news.firebaseio.com/v0/item/${key}.json`);
+async function fetchItem(key: number) {
+  const item = await fetchJSON<Item>(`https://hacker-news.firebaseio.com/v0/item/${key}.json`);
+
+  if (item.type === "story") {
+    storyLoader.load(key);
+  }
+
+  if (item.type === "comment") {
+    item.attributes = commentAttributes.get(key);
+    console.log(commentAttributes, item.attributes);
+  }
+
+  return item;
 }
 
 function fetchUser(key: string) {

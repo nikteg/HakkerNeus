@@ -1,5 +1,6 @@
 type Query {
   items(limit: Int): [Item!]
+  item(id: Int): Item
 }
 
 enum ItemType {
@@ -10,7 +11,9 @@ enum ItemType {
   pollopt
 }
 
-type Item {
+union Item = Story | Comment
+
+type Story {
   by: User
   type: ItemType
   id: Int!
@@ -18,7 +21,25 @@ type Item {
   text: String
   title: String
   descendants: Int!
-  kids: [Item!]
+  kids: [Comment!]
+  score: Int!
+}
+
+type CommentAttributes {
+  id: Int!
+  color: String
+}
+
+type Comment {
+  by: User
+  type: ItemType
+  id: Int!
+  url: String
+  text: String
+  title: String
+  descendants: Int!
+  kids: [Comment!]
+  attributes: CommentAttributes
 }
 
 type User {
