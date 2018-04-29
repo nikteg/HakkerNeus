@@ -24,6 +24,10 @@ const Comment = styled.TouchableOpacity`
 `;
 
 function ListView(props: Response & Props) {
+  if (props.error) {
+    return <Text>{props.error.message}</Text>;
+  }
+
   return (
     <FlatList
       data={props.items}
