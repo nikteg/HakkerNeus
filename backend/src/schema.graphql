@@ -20,7 +20,7 @@ type Story {
   url: String
   text: String
   title: String
-  descendants: Int!
+  descendants: Int
   kids: [Comment!]
   score: Int!
 }
