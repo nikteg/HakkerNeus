@@ -1,11 +1,26 @@
 import * as React from "react";
-import { FlatList, View, Text } from "react-native";
+import { FlatList, View, Text, StyleSheet } from "react-native";
 import styled from "styled-components/native";
 import { graphql, QueryProps } from "react-apollo";
 import gql from "graphql-tag";
+import { Item } from "../backend/src/typings/api";
 
-const ListItem = styled.Text`
+const ListItem = styled.View`
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  border-bottom-width: ${StyleSheet.hairlineWidth};
+`;
+
+const Title = styled.TouchableOpacity`
   padding: 10px;
+  flex: 1;
+`;
+const Comment = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  background-color: #bbb;
 `;
 
 function ListView(props: Response & Props) {
@@ -16,17 +31,18 @@ function ListView(props: Response & Props) {
       onRefresh={props.refetch}
       keyExtractor={(i) => String(i.id)}
       renderItem={({ item, index, separators }) => (
-        <ListItem onPress={() => props.onPress(item)}>{item.title}</ListItem>
+        <ListItem>
+          <Title onPress={() => props.onPress(item)}>
+            <Text>{item.title}</Text>
+          </Title>
+          <Comment onPress={() => props.onPressComment(item)}>
+            <Text>{item.descendants}</Text>
+          </Comment>
+        </ListItem>
       )}
     />
   );
 }
-
-export type Item = {
-  id: number;
-  title: string;
-  url: string;
-};
 
 type Response = {
   items: Item[];
@@ -34,15 +50,19 @@ type Response = {
 
 type Props = {
   onPress: (item: Item) => void;
+  onPressComment: (item: Item) => void;
 };
 
 const ListViewConnected = graphql<Response, Props>(
   gql`
     query ListViewQuery {
       items {
-        id
-        title
-        url
+        ... on Story {
+          id
+          title
+          url
+          descendants
+        }
       }
     }
   `,
