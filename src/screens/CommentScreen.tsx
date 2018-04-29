@@ -16,7 +16,7 @@ class CommentsScreen extends React.Component<Props> {
       return null;
     }
 
-    return kids.map((comment: any) => {
+    return kids.filter((comment) => comment.text).map((comment: any) => {
       return (
         <React.Fragment key={comment.id}>
           <View
