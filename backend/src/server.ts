@@ -7,9 +7,8 @@ import * as _ from "lodash";
 import { graphqlKoa, graphiqlKoa } from "apollo-server-koa";
 import { importSchema } from "graphql-import";
 import { makeExecutableSchema } from "graphql-tools";
-import { JSDOM } from "jsdom";
 import { Item } from "./typings/api";
-import { storyLoader, commentAttributes } from "./resources/comments";
+import { fetchReadability, readabilityLoader } from "./resources/readability";
 
 require("dotenv").config();
 
@@ -82,12 +81,12 @@ async function fetchItem(key: number) {
   const item = await fetchJSON<Item>(`https://hacker-news.firebaseio.com/v0/item/${key}.json`);
 
   if (item.type === "story") {
-    storyLoader.load(key);
-  }
-
-  if (item.type === "comment") {
-    item.attributes = commentAttributes.get(key);
-    console.log(commentAttributes, item.attributes);
+    try {
+      const readabilityData = await readabilityLoader.load(item.url);
+      item.content = readabilityData;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return item;

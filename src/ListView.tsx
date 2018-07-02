@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, View, Text, StyleSheet, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { graphql, QueryProps, ChildProps } from "react-apollo";
 import gql from "graphql-tag";
@@ -35,7 +35,11 @@ const Header = styled.View`
 
 const ListView: React.SFC<Props & ChildProps<Props, Response>> = (props) => {
   if (props.data.error) {
-    return <Text>{props.data.error.message}</Text>;
+    return (
+      <ScrollView>
+        <Text>{JSON.stringify(props.data.error, null, 2)}</Text>
+      </ScrollView>
+    );
   }
 
   return (
@@ -91,7 +95,12 @@ const ListViewConnected = graphql<Props>(
           }
           title
           url
+          type
           descendants
+          content {
+            content
+            lead_image_url
+          }
         }
       }
     }

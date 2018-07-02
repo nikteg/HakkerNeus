@@ -1,33 +1,13 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { ScrollView, Text, Dimensions, Linking } from "react-native";
+import { ScrollView, Text, Dimensions, Linking, ImageBackground } from "react-native";
 import HTML from "react-native-render-html";
 import { Item, CommentItem, StoryItem } from "../../backend/src/typings/api";
+import styled from "styled-components/native";
 
 type Props = {
   uri: string;
 };
-
-type State = {
-  html: string;
-};
-
-interface ReadableResponse {
-  title: string;
-  author: string;
-  date_published?: any;
-  dek?: any;
-  lead_image_url: string;
-  content: string;
-  next_page_url?: any;
-  url: string;
-  domain: string;
-  excerpt: string;
-  word_count: number;
-  direction: string;
-  total_pages: number;
-  rendered_pages: number;
-}
 
 interface ErrorResponse {
   error: string;
@@ -51,28 +31,41 @@ function isStoryItem(item: Item): item is StoryItem {
   return item.type === "story";
 }
 
-export default class ReaderScreen extends React.Component<Props & NavigationScreenProps, State> {
-  state: State = {
-    html: "Loading...",
-  };
+const HeaderText = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  margin: 24px;
+  text-align: center;
+  margin-bottom: 0;
+`;
 
-  componentWillMount() {
-    const { item } = this.props.navigation.state.params;
-    const readableUrl = `http://localhost:3000/readability/?url=${encodeURIComponent(item.url)}`;
-
-    fetch(readableUrl)
-      .then((res) => (res.status === 200 ? res.json() : Promise.reject(res)))
-      .then((res: ReadableResponse) => this.setState({ html: res.content }))
-      .catch((res: Response) => res.json())
-      .then((res: ErrorResponse) => this.setState({ html: errorHTML(res.error, item) }));
-  }
-
+export default class ReaderScreen extends React.Component<Props & NavigationScreenProps> {
   render() {
     const { item } = this.props.navigation.state.params;
-    const { html } = this.state;
+
+    if (!isStoryItem(item) || !item.content) {
+      return null;
+    }
+    const { lead_image_url: header, content: html } = item.content;
+
     return (
       <ScrollView style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 24, marginBottom: 0 }}>{item.title}</Text>
+        {header ? (
+          <ImageBackground blurRadius={5} source={{ uri: header }} style={{ width: "100%", height: "25%" }}>
+            <HeaderText
+              style={{
+                color: "#f1f1f1",
+                textShadowColor: "#222",
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 1,
+              }}
+            >
+              {item.title}
+            </HeaderText>
+          </ImageBackground>
+        ) : (
+          <HeaderText>{item.title}</HeaderText>
+        )}
         <HTML
           html={html}
           imagesMaxWidth={Dimensions.get("window").width - padding * 2}

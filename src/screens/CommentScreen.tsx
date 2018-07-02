@@ -10,7 +10,11 @@ type Response = {
   item: any;
 };
 
-type Props = { item: Item } & NavigationScreenProps & QueryProps;
+type Props = {
+  item: Item;
+  handleInternalLink: (url: string) => any;
+} & NavigationScreenProps &
+  QueryProps;
 
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
@@ -34,14 +38,31 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
               padding: 10,
             }}
           >
-            <Text style={{ fontWeight: "800", fontSize: 10, color: "#999" }}>{comment.by.id}</Text>
-            <HTML html={comment.text} onLinkPress={(evt, href) => Linking.openURL(href)} />
+            <Text
+              style={{
+                fontWeight: "800",
+                fontSize: 10,
+                color: "#999",
+              }}
+            >
+              {comment.by.id}
+            </Text>
+            <HTML html={comment.text} onLinkPress={this.handlePressLink} />
           </View>
           {this.renderKids(comment.kids, depth + 1)}
         </React.Fragment>
       );
     });
   };
+
+  handlePressLink = (evt, href) => {
+    if (href.test(/^https?:\/\/news.ycombinator.com/)) {
+      this.props.handleInternalLink(href);
+    } else {
+      Linking.openURL(href);
+    }
+  };
+
   render() {
     const { loading } = this.props.data;
 
@@ -82,6 +103,9 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
       id
       by {
         id
+      }
+      attributes {
+        color
       }
     }
   `,

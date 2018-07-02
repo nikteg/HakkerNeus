@@ -1,3 +1,5 @@
+import { ReadabilityResponse } from "../resources/readability";
+
 export type User = {
   about: string;
   created: number;
@@ -17,6 +19,7 @@ export type StoryItem = {
   title: string;
   type: "story";
   url: string;
+  content: ReadabilityResponse;
 };
 
 export type CommentItem = {

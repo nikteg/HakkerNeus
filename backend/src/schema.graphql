@@ -24,6 +24,24 @@ type Story {
   descendants: Int
   kids: [Comment!]
   score: Int!
+  content: ReadabilityResponse
+}
+
+type ReadabilityResponse {
+  title: String!
+  author: String!
+  date_published: String
+  dek: String
+  lead_image_url: String
+  content: String!
+  next_page_url: String
+  url: String!
+  domain: String!
+  excerpt: String!
+  word_count: Int!
+  direction: String!
+  total_pages: Int!
+  rendered_pages: Int!
 }
 
 type CommentAttributes {
