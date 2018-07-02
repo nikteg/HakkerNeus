@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import styled from "styled-components/native";
-import { graphql, QueryProps } from "react-apollo";
+import { graphql, QueryProps, ChildProps } from "react-apollo";
 import gql from "graphql-tag";
 import { Item } from "../backend/src/typings/api";
 
@@ -23,16 +23,16 @@ const Comment = styled.TouchableOpacity`
   background-color: #bbb;
 `;
 
-function ListView(props: Response & Props) {
-  if (props.error) {
-    return <Text>{props.error.message}</Text>;
+const ListView: React.SFC<Props & DataProps> = (props) => {
+  if (props.data.error) {
+    return <Text>{props.data.error.message}</Text>;
   }
 
   return (
     <FlatList
-      data={props.items}
-      refreshing={props.loading}
-      onRefresh={props.refetch}
+      data={props.data.items}
+      refreshing={props.data.loading}
+      onRefresh={props.data.refetch}
       keyExtractor={(i) => String(i.id)}
       renderItem={({ item, index, separators }) => (
         <ListItem>
@@ -46,7 +46,9 @@ function ListView(props: Response & Props) {
       )}
     />
   );
-}
+};
+
+type DataProps = ChildProps<Props, Response>;
 
 type Response = {
   items: Item[];
@@ -70,7 +72,6 @@ const ListViewConnected = graphql<Response, Props>(
       }
     }
   `,
-  { props: ({ data }) => ({ ...data }) },
 )(ListView);
 
 export default ListViewConnected;

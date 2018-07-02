@@ -6,7 +6,7 @@ import { Item } from "../../backend/src/typings/api";
 import { Text, View, ScrollView, Linking, StyleSheet } from "react-native";
 import HTML from "react-native-render-html";
 
-type Props = { item: Item } & NavigationScreenProps;
+type Props = { item: Item } & NavigationScreenProps & QueryProps;
 
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 

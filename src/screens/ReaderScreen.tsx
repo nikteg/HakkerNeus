@@ -2,7 +2,7 @@ import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
 import { ScrollView, Text, Dimensions, Linking } from "react-native";
 import HTML from "react-native-render-html";
-import { Item } from "../ListView";
+import { Item, CommentItem, StoryItem } from "../../backend/src/typings/api";
 
 type Props = {
   uri: string;
@@ -36,10 +36,19 @@ interface ErrorResponse {
 const padding = 24;
 
 function errorHTML(error: string, item: Item) {
-  return `
+  if (isStoryItem(item)) {
+    return `
     <div>Error: ${error}</div>
     <div>Go to <a href="${item.url}">link</a></div>
   `;
+  }
+  return `
+    <div>Error: ${error}</div>
+  `;
+}
+
+function isStoryItem(item: Item): item is StoryItem {
+  return item.type === "story";
 }
 
 export default class ReaderScreen extends React.Component<Props & NavigationScreenProps, State> {
