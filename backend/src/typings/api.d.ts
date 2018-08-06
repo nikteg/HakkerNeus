@@ -8,7 +8,7 @@ export type User = {
 };
 
 export type StoryItem = {
-  by: string;
+  by: User;
   descendants: number;
   id: number;
   kids: number[];
@@ -20,7 +20,7 @@ export type StoryItem = {
 };
 
 export type CommentItem = {
-  by: string;
+  by: User;
   id: number;
   kids: number[];
   parent: number;

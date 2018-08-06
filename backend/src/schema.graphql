@@ -18,6 +18,7 @@ type Story {
   type: ItemType
   id: Int!
   url: String
+  time: Int!
   text: String
   title: String
   descendants: Int
@@ -35,6 +36,7 @@ type Comment {
   type: ItemType
   id: Int!
   url: String
+  time: Int!
   text: String
   title: String
   descendants: Int!

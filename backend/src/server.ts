@@ -61,7 +61,7 @@ const resolvers = {
   },
 };
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schema = makeExecutableSchema({ typeDefs, resolvers, logger: { log: (e) => console.log("GraphQL", e) } });
 
 router.post("/graphql", graphqlKoa({ schema }));
 router.get("/graphql", graphqlKoa({ schema }));
@@ -112,12 +112,8 @@ function fetchReadability(url: string) {
   };
 
   return fetch(`https://mercury.postlight.com/parser?url=${encodeURIComponent(url)}`, init)
-    .then((res) => (res.status === 200 ? res.text() : res.json().then((json) => Promise.reject(json))))
-    .then((text) => {
-      const json = JSON.parse(text);
-      return json.error ? Promise.reject(json.messages) : Promise.resolve(text);
-    })
-    .catch((error) => Promise.reject("Could not parse content"));
+    .then((res) => res.json())
+    .then((json) => (json.error ? Promise.reject(json.messages) : Promise.resolve(json)));
 }
 
 router.get("/readability", async (ctx) => {

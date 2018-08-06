@@ -1,16 +1,20 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { graphql, QueryProps } from "react-apollo";
+import { graphql, QueryProps, ChildProps } from "react-apollo";
 import gql from "graphql-tag";
 import { Item } from "../../backend/src/typings/api";
 import { Text, View, ScrollView, Linking, StyleSheet } from "react-native";
 import HTML from "react-native-render-html";
 
+type Response = {
+  item: any;
+};
+
 type Props = { item: Item } & NavigationScreenProps & QueryProps;
 
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
-class CommentsScreen extends React.Component<Props> {
+class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>> {
   renderKids = (kids, depth = 0) => {
     if (!kids) {
       return null;
@@ -39,10 +43,12 @@ class CommentsScreen extends React.Component<Props> {
     });
   };
   render() {
-    const { loading } = this.props;
+    const { loading } = this.props.data;
 
     if (!loading) {
-      const { item: { kids } } = this.props;
+      const {
+        item: { kids },
+      } = this.props.data;
       return <ScrollView style={{ backgroundColor: "#eee" }}>{this.renderKids(kids)}</ScrollView>;
     } else {
       return <Text>loading</Text>;
@@ -50,7 +56,7 @@ class CommentsScreen extends React.Component<Props> {
   }
 }
 
-const CommentsScreenConnected = graphql<Response, Props>(
+const CommentsScreenConnected = graphql<Props, {}, {}, any>(
   gql`
     query CommmentsQuery($storyId: Int!) {
       item(id: $storyId) {
@@ -80,7 +86,6 @@ const CommentsScreenConnected = graphql<Response, Props>(
     }
   `,
   {
-    props: ({ data }) => ({ ...data }),
     options: (props) => {
       return {
         variables: { storyId: props.navigation.state.params.storyId },
