@@ -1,0 +1,82 @@
+type Query {
+  item(id: Int!): Item
+  user(id: String!): User
+}
+
+enum ItemType {
+  job
+  story
+  comment
+  poll
+  pollopt
+}
+
+interface Item {
+  by: User
+  type: ItemType
+  id: Int!
+  url: String
+  time: Int!
+  text: String
+  title: String
+  descendants: Int
+  kids: [Comment!]
+}
+
+type Story implements Item {
+  by: User
+  type: ItemType
+  id: Int!
+  url: String
+  time: Int!
+  text: String
+  title: String
+  descendants: Int
+  kids: [Comment!]
+  score: Int!
+  content: ReadabilityResponse
+}
+
+type Comment implements Item {
+  by: User
+  type: ItemType
+  id: Int!
+  url: String
+  time: Int!
+  text: String
+  title: String
+  descendants: Int!
+  kids: [Comment!]
+  attributes: CommentAttributes
+}
+
+type ReadabilityResponse {
+  title: String!
+  author: String!
+  date_published: String
+  dek: String
+  lead_image_url: String
+  content: String!
+  next_page_url: String
+  url: String!
+  domain: String!
+  excerpt: String!
+  word_count: Int!
+  direction: String!
+  total_pages: Int!
+  rendered_pages: Int!
+}
+
+type CommentAttributes {
+  id: Int!
+  color: String
+}
+
+type User {
+  id: String!
+  karma: Int!
+  about: String
+  delay: Int
+  created: Int!
+  submitted: [Int!]!
+}
