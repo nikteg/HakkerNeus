@@ -13,7 +13,7 @@ export class UserService {
       `https://keybase.io/_/api/1.0/user/lookup.json?hackernews=${id}&fields=proofs_summary`,
     );
 
-    if (result.status.code !== 0) {
+    if (result.status.code !== 0 || !result.them[0]) {
       return [];
     }
 

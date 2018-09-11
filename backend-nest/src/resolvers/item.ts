@@ -7,8 +7,14 @@ import { UserService } from "../services/user";
 export class ItemResolver {
   constructor(private readonly itemService: ItemService, private readonly userService: UserService) {}
 
+  @Query("items")
+  async findItems(@Args("limit") limit: number): Promise<Item[]> {
+    const ids = await this.itemService.getTopItems(limit);
+    return Promise.all(ids.map(this.itemService.findOneById));
+  }
+
   @Query("item")
-  findItem(@Args("id") id: string): Promise<Item> {
+  findItem(@Args("id") id: number): Promise<Item> {
     return this.itemService.findOneById(id);
   }
 

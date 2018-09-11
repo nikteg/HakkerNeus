@@ -1,4 +1,5 @@
 type Query {
+  items(limit: Int): [Item!]
   item(id: Int!): Item
   user(id: String!): User
 }
