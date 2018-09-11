@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import ListView from "./src/ListView";
-import { StackNavigator } from "react-navigation";
+import { StackNavigator, createStackNavigator } from "react-navigation";
 
 import CommentsScreen from "./src/screens/CommentScreen";
 import ReaderScreen from "./src/screens/ReaderScreen";
@@ -26,7 +26,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const Navigator = StackNavigator({
+const Navigator = createStackNavigator({
   Home: {
     screen: HomeScreen,
   },

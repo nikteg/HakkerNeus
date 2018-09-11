@@ -33,6 +33,13 @@ const Header = styled.View`
   flex-direction: row;
 `;
 
+const Number = styled.Text`
+  color: #666666;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0px 10px 10px;
+`;
+
 const ListView: React.SFC<Props & ChildProps<Props, Response>> = (props) => {
   if (props.data.error) {
     return (
@@ -48,24 +55,27 @@ const ListView: React.SFC<Props & ChildProps<Props, Response>> = (props) => {
       refreshing={props.data.loading}
       onRefresh={props.data.refetch}
       keyExtractor={(i) => String(i.id)}
-      renderItem={({ item }) => (
+      renderItem={({ item, index }) => (
         <ListItem>
+          <Number>{index}</Number>
           <ItemContainer onPress={() => props.onPress(item)}>
             <Header>
-              <Text style={{ fontSize: 10, color: "#ff6600" }}>{item.score}</Text>
-              <Text style={{ fontSize: 10, color: "#666666" }}> · {moment(item.time * 1000).fromNow()}</Text>
+              <Text style={{ color: "#ff6600" }}>
+                {item.score}
+                <Text style={{ color: "#666666" }}> · {moment(item.time * 1000).fromNow()}</Text>
+              </Text>
             </Header>
             <Title>
-              <Text>{item.title}</Text>
+              <Text style={{ fontSize: 16 }}>{item.title}</Text>
             </Title>
-            <Text style={{ fontSize: 10, color: "#666666" }}>
+            <Text style={{ color: "#666666" }}>
               {item.by.id}
               {item.url && " — " + item.url}
             </Text>
           </ItemContainer>
           <Comment onPress={() => props.onPressComment(item)}>
             <Icon name="comments" size={24} color={"#ff6600"} />
-            <Text style={{ fontSize: 10 }}>{item.descendants}</Text>
+            <Text>{item.descendants}</Text>
           </Comment>
         </ListItem>
       )}

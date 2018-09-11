@@ -5,6 +5,8 @@ import gql from "graphql-tag";
 import { Item } from "../../backend/src/typings/api";
 import { Text, View, ScrollView, Linking, StyleSheet } from "react-native";
 import HTML from "react-native-render-html";
+import moment from "moment";
+import { branch, renderComponent, compose, hoistStatics } from "recompose";
 
 type Response = {
   item: any;
@@ -19,6 +21,16 @@ type Props = {
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
 class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>> {
+  static navigationOptions = ({ navigation }: NavigationScreenProps<{ title: string }>) => {
+    return {
+      title: navigation.getParam("title", "Comments"),
+    };
+  };
+
+  componentDidMount() {
+    this.props.navigation.setParams({ title: "Comments for " + this.props.data.item!.title });
+  }
+
   renderKids = (kids, depth = 0) => {
     if (!kids) {
       return null;
@@ -40,12 +52,19 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
           >
             <Text
               style={{
-                fontWeight: "800",
-                fontSize: 10,
-                color: "#999",
+                color: "#ff6600",
+                paddingBottom: 10,
               }}
             >
               {comment.by.id}
+              <Text
+                style={{
+                  color: "#666666",
+                }}
+              >
+                {" "}
+                · {moment(comment.time * 1000).fromNow()}
+              </Text>
             </Text>
             <HTML html={comment.text} onLinkPress={this.handlePressLink} />
           </View>
@@ -77,35 +96,24 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
   }
 }
 
+const renderWhileLoading = (component, propName = "data") =>
+  branch((props) => props[propName] && props[propName].loading, renderComponent(component));
+
 const CommentsScreenConnected = graphql<Props, {}, {}, any>(
   gql`
     query CommmentsQuery($storyId: Int!) {
       item(id: $storyId) {
         ... on Story {
+          title
           kids {
-            ...CommentsFields
-            kids {
-              ...CommentsFields
-              kids {
-                ...CommentsFields
-                kids {
-                  ...CommentsFields
-                }
-              }
+            text
+            id
+            time
+            by {
+              id
             }
           }
         }
-      }
-    }
-
-    fragment CommentsFields on Comment {
-      text
-      id
-      by {
-        id
-      }
-      attributes {
-        color
       }
     }
   `,
@@ -116,6 +124,11 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
       };
     },
   },
-)(CommentsScreen);
+);
 
-export default CommentsScreenConnected;
+export default hoistStatics(
+  compose(
+    CommentsScreenConnected,
+    renderWhileLoading(() => <Text>Loading</Text>),
+  ),
+)(CommentsScreen);
