@@ -79,4 +79,10 @@ type User {
   delay: Int
   created: Int!
   submitted: [Int!]!
+  proofs: [Proof!]!
+}
+
+type Proof {
+  key: String!
+  url: String!
 }

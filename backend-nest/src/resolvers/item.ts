@@ -8,17 +8,13 @@ export class ItemResolver {
   constructor(private readonly itemService: ItemService, private readonly userService: UserService) {}
 
   @Query("item")
-  async findItem(@Args("id") id: string): Promise<Item> {
-    let item = await this.itemService.findOneById(id);
-    console.log(item)
-    return item;
+  findItem(@Args("id") id: string): Promise<Item> {
+    return this.itemService.findOneById(id);
   }
 
   @ResolveProperty("by")
-  async findAuthor(@Parent() item: Item): Promise<User> {
-    let user = await this.userService.findOneById(item.by);
-    console.log(user);
-    return user;
+  findAuthor(@Parent() item: Item): Promise<User> {
+    return this.userService.findOneById(item.by);
   }
 
   @ResolveProperty()
@@ -35,10 +31,8 @@ export class CommentResolver {
   constructor(private readonly userService: UserService) {}
 
   @ResolveProperty("by")
-  async findAuthor(@Parent() item: Item): Promise<User> {
-    let user = await this.userService.findOneById(item.by);
-    console.log(user);
-    return user;
+  findAuthor(@Parent() item: Item): Promise<User> {
+    return this.userService.findOneById(item.by);
   }
 }
 
@@ -47,9 +41,7 @@ export class StoryResolver {
   constructor(private readonly userService: UserService) {}
 
   @ResolveProperty("by")
-  async findAuthor(@Parent() item: Item): Promise<User> {
-    let user = await this.userService.findOneById(item.by);
-    console.log(user);
-    return user;
+  findAuthor(@Parent() item: Item): Promise<User> {
+    return this.userService.findOneById(item.by);
   }
 }

@@ -1,4 +1,3 @@
-
 export type Item = Story | Comment;
 
 export type Story = {
@@ -12,7 +11,7 @@ export type Story = {
   type: "story";
   url: string;
   content: ReadabilityResponse;
-}
+};
 
 export type Comment = {
   by: string;
@@ -33,7 +32,6 @@ export type User = {
   submitted: number[];
 };
 
-
 export interface ReadabilityResponse {
   title: string;
   author: string;
@@ -49,4 +47,48 @@ export interface ReadabilityResponse {
   direction: string;
   total_pages: number;
   rendered_pages: number;
+}
+
+export interface ProofTuple {
+  key: string;
+  url: string;
+}
+
+export interface KeybaseResponse {
+  status: {
+    code: number;
+    name: string;
+  };
+  them: {
+    id: string;
+    basics: Basics;
+    proofs_summary: {
+      all: Proof[];
+    };
+  }[];
+}
+interface Basics {
+  username: string;
+  ctime: number;
+  mtime: number;
+  id_version: number;
+  track_version: number;
+  last_id_change: number;
+  username_cased: string;
+  status: number;
+  salt: string;
+  eldest_seqno: number;
+}
+
+interface Proof {
+  proof_type: string;
+  nametag: string;
+  state: number;
+  proof_url: string;
+  sig_id: string;
+  proof_id: string;
+  human_url: string;
+  service_url: string;
+  presentation_group: string;
+  presentation_tag: string;
 }

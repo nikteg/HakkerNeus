@@ -9,7 +9,7 @@ function validateReponse(resp: Response) {
   }
 }
 
-export const fetchJSON = (url: string) =>
+export const fetchJSON = <T>(url: string): Promise<T> =>
   fetch(url)
     .then(validateReponse)
     .then((r) => r.json());
