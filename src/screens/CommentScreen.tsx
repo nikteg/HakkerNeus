@@ -104,10 +104,11 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
     query CommmentsQuery($storyId: Int!) {
       item(id: $storyId) {
         ... on Story {
+          id
           title
           kids {
-            text
             id
+            text
             time
             by {
               id

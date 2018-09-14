@@ -6,7 +6,7 @@ import * as DataLoader from "dataloader";
 
 @Injectable()
 export class ItemService {
-  loader: DataLoader<number, Item>;
+  private loader: DataLoader<number, Item>;
 
   constructor() {
     const fetchItem = (id: number) => fetchJSON<Item>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
@@ -18,11 +18,15 @@ export class ItemService {
     return this.loader.load(id);
   }
 
+  getManyItems(ids: number[]): Promise<Item[]> {
+    return this.loader.loadMany(ids);
+  }
+
   async getTopItems(limit: number): Promise<Item[]> {
     const ids = await fetchJSON<number[]>(`https://hacker-news.firebaseio.com/v0/topstories.json`);
 
     const limitedIds = take(ids, limit);
 
-    return this.loader.loadMany(limitedIds);
+    return this.getManyItems(limitedIds);
   }
 }

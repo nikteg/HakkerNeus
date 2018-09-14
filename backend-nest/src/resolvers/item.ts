@@ -9,7 +9,7 @@ export class ItemResolver {
 
   @Query("items")
   findItems(@Args("limit") limit: number): Promise<Item[]> {
-    return this.itemService.getTopItems(limit);
+    return this.itemService.getTopItems(Math.min(limit, 20));
   }
 
   @Query("item")
@@ -22,6 +22,12 @@ export class ItemResolver {
     return this.userService.findOneById(item.by);
   }
 
+  @ResolveProperty("kids")
+  async findChildren(@Parent() item: Item): Promise<Item[]> {
+    const items = await this.itemService.getManyItems(item.kids);
+    return items.filter(item => item.by !== null);
+  }
+
   @ResolveProperty()
   __resolveType(item: Item) {
     if (item.type === "story") {
@@ -32,21 +38,7 @@ export class ItemResolver {
 }
 
 @Resolver("Comment")
-export class CommentResolver {
-  constructor(private readonly userService: UserService) {}
-
-  @ResolveProperty("by")
-  findAuthor(@Parent() item: Item): Promise<User> {
-    return this.userService.findOneById(item.by);
-  }
-}
+export class CommentResolver extends ItemResolver {}
 
 @Resolver("Story")
-export class StoryResolver {
-  constructor(private readonly userService: UserService) {}
-
-  @ResolveProperty("by")
-  findAuthor(@Parent() item: Item): Promise<User> {
-    return this.userService.findOneById(item.by);
-  }
-}
+export class StoryResolver extends ItemResolver {}

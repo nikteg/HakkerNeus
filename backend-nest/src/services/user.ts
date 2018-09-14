@@ -5,8 +5,8 @@ import * as DataLoader from "dataloader";
 
 @Injectable()
 export class UserService {
-  userLoader: DataLoader<string, User>;
-  proofLoader: DataLoader<string, ProofTuple[]>;
+  private userLoader: DataLoader<string, User>;
+  private proofLoader: DataLoader<string, ProofTuple[]>;
 
   constructor() {
     const fetchUser = (id: string) => fetchJSON<User>(`https://hacker-news.firebaseio.com/v0/user/${id}.json`);
