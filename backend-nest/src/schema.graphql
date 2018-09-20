@@ -1,5 +1,5 @@
 type Query {
-  items(limit: Int): [Item!]
+  topstories(first: Int, offset: Int): [Item!]
   item(id: Int!): Item
   user(id: String!): User
 }
@@ -20,8 +20,17 @@ interface Item {
   time: Int!
   text: String
   title: String
-  descendants: Int
-  kids: [Comment!]
+}
+
+type JobStory implements Item {
+  by: User
+  type: ItemType
+  id: Int!
+  url: String
+  time: Int!
+  text: String
+  title: String
+  score: Int!
 }
 
 type Story implements Item {

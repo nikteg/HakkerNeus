@@ -1,4 +1,4 @@
-export type Item = Story | Comment;
+export type Item = Story | JobStory | PollItem | PollOption | Comment;
 
 export type Story = {
   by: string;
@@ -11,6 +11,42 @@ export type Story = {
   type: "story";
   url: string;
   content: ReadabilityResponse;
+};
+
+export type ItemWithChildren = Story | Comment | PollItem;
+
+export type JobStory = {
+  by: string;
+  id: number;
+  score: number;
+  text: string;
+  time: number;
+  title: string;
+  type: "job";
+  url: string;
+};
+
+export type PollItem = {
+  by: string;
+  descendants: number;
+  id: number;
+  kids: number[];
+  parts: number[];
+  score: number;
+  time: number;
+  text: string;
+  title: string;
+  type: "poll";
+};
+
+export type PollOption = {
+  by: string;
+  id: number;
+  poll: number;
+  score: number;
+  text: string;
+  time: number;
+  type: "pollopt";
 };
 
 export type Comment = {

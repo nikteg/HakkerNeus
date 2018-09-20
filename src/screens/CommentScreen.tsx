@@ -85,6 +85,8 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
   render() {
     const { loading } = this.props.data;
 
+    console.log(this.props.data);
+
     if (!loading) {
       const {
         item: { kids },
@@ -114,6 +116,7 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
               id
             }
           }
+          type
         }
       }
     }

@@ -9,9 +9,11 @@ import HomeScreen from "./src/screens/HomeScreen";
 
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import { InMemoryCache, IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import { ApolloProvider } from "react-apollo";
 import { onError } from "apollo-link-error";
+
+const introspectionQueryResultData = require('./fragmentTypes.json');
 
 const logoutLink = onError(({ networkError, response }) => {
   console.log(response, networkError);
@@ -23,19 +25,23 @@ const client = new ApolloClient({
   // Pass the configuration option { uri: YOUR_GRAPHQL_API_URL } to the `HttpLink` to connect
   // to a different host
   link: logoutLink.concat(new HttpLink({ uri: "http://localhost:3000/graphql" })),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    fragmentMatcher: new IntrospectionFragmentMatcher({
+      introspectionQueryResultData
+    })
+  })
 });
 
 const Navigator = createStackNavigator({
   Home: {
-    screen: HomeScreen,
+    screen: HomeScreen
   },
   Reader: {
-    screen: ReaderScreen,
+    screen: ReaderScreen
   },
   Comments: {
-    screen: CommentsScreen,
-  },
+    screen: CommentsScreen
+  }
 });
 
 export default () => (

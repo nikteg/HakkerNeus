@@ -1,0 +1,1 @@
+{"__schema":{"types":[{"kind":"INTERFACE","name":"Item","possibleTypes":[{"name":"JobStory"},{"name":"Story"},{"name":"Comment"}]}]}}
