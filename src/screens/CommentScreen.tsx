@@ -74,8 +74,8 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
     });
   };
 
-  handlePressLink = (evt, href) => {
-    if (href.test(/^https?:\/\/news.ycombinator.com/)) {
+  handlePressLink = (evt: any, href: string) => {
+    if (/^https?:\/\/news.ycombinator.com/.test(href)) {
       this.props.handleInternalLink(href);
     } else {
       Linking.openURL(href);
