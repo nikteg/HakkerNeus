@@ -132,7 +132,7 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
   private renderItem = ({ item, index }) => (
     <ListItem>
       <Number>{index + 1}</Number>
-      <ItemContainer onPress={() => this.props.onPress(item)}>
+      <ItemContainer onPress={() => this.props.onPress(item)} onLongPress={() => this.props.onLongPress(item)}>
         <Header>
           <Text style={{ color: "#ff6600" }}>
             {item.score}
@@ -163,6 +163,7 @@ type Response = {
 
 type Props = {
   onPress: (item: Item) => void;
+  onLongPress: (item: Item) => void;
   onPressComment: (item: Item) => void;
 };
 

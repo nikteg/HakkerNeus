@@ -1,11 +1,12 @@
 import * as React from "react";
-import { NavigationScreenProps } from "react-navigation";
+import { NavigationScreenProps, NavigationStackScreenOptions } from "react-navigation";
 import { graphql, QueryProps, ChildProps } from "react-apollo";
 import gql from "graphql-tag";
 import { Item } from "../../backend/src/typings/api";
-import { Text, View, ScrollView, Linking, StyleSheet } from "react-native";
+import { Text, View, ScrollView, Linking, StyleSheet, TouchableOpacityComponent, TouchableOpacity } from "react-native";
 import HTML from "react-native-render-html";
 import moment from "moment";
+import Icon from "react-native-vector-icons/EvilIcons";
 import { branch, renderComponent, compose, hoistStatics } from "recompose";
 
 type Response = {
@@ -21,9 +22,10 @@ type Props = {
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
 class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>> {
-  static navigationOptions = ({ navigation }: NavigationScreenProps<{ title: string }>) => {
+  static navigationOptions = ({ navigation }: NavigationScreenProps<{ title: string }>): NavigationStackScreenOptions => {
     return {
       title: navigation.getParam("title", "Comments"),
+      headerRight: <TouchableOpacity><Icon name="share-apple" color="#007AFF" size={40} /></TouchableOpacity>
     };
   };
 
