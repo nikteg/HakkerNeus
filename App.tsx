@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useScreens } from "react-native-screens";
 
 import ListView from "./src/ListView";
 import { StackNavigator, createStackNavigator } from "react-navigation";
@@ -13,7 +14,9 @@ import { InMemoryCache, IntrospectionFragmentMatcher } from "apollo-cache-inmemo
 import { ApolloProvider } from "react-apollo";
 import { onError } from "apollo-link-error";
 
-const introspectionQueryResultData = require('./fragmentTypes.json');
+const introspectionQueryResultData = require("./fragmentTypes.json");
+
+useScreens();
 
 const logoutLink = onError(({ networkError, response }) => {
   console.log(response, networkError);
@@ -27,21 +30,21 @@ const client = new ApolloClient({
   link: logoutLink.concat(new HttpLink({ uri: "http://localhost:3000/graphql" })),
   cache: new InMemoryCache({
     fragmentMatcher: new IntrospectionFragmentMatcher({
-      introspectionQueryResultData
-    })
-  })
+      introspectionQueryResultData,
+    }),
+  }),
 });
 
 const Navigator = createStackNavigator({
   Home: {
-    screen: HomeScreen
+    screen: HomeScreen,
   },
   Reader: {
-    screen: ReaderScreen
+    screen: ReaderScreen,
   },
   Comments: {
-    screen: CommentsScreen
-  }
+    screen: CommentsScreen,
+  },
 });
 
 export default () => (
