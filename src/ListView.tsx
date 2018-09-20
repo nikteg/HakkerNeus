@@ -1,7 +1,7 @@
 import * as React from "react";
-import { FlatList, View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, Text, View } from "react-native";
 import styled from "styled-components/native";
-import { graphql, QueryProps, ChildProps } from "react-apollo";
+import { ChildProps, graphql } from "react-apollo";
 import gql from "graphql-tag";
 import { Item, StoryItem } from "../backend/src/typings/api";
 import moment from "moment";

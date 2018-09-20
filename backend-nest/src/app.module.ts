@@ -1,11 +1,10 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ItemService } from "./services/item";
 import { CommentResolver, ItemResolver, JobStoryResolver, StoryResolver } from "./resolvers/item";
 import { UserService } from "./services/user";
 import { UserResolver } from "./resolvers/user";
+import { ReadabilityService } from "./services/readability";
 
 @Module({
   imports: [
@@ -13,14 +12,14 @@ import { UserResolver } from "./resolvers/user";
       typePaths: ["./**/*.graphql"],
     }),
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     ItemService,
     ItemResolver,
     JobStoryResolver,
     StoryResolver,
     CommentResolver,
+    ReadabilityService,
     UserService,
     UserResolver,
   ],

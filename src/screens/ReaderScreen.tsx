@@ -1,8 +1,8 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { ScrollView, Text, Dimensions, Linking, ImageBackground } from "react-native";
+import { Dimensions, ImageBackground, Linking, ScrollView, Text } from "react-native";
 import HTML from "react-native-render-html";
-import { Item, CommentItem, StoryItem } from "../../backend/src/typings/api";
+import { Item, StoryItem } from "../../backend/src/typings/api";
 import styled from "styled-components/native";
 
 type Props = {
@@ -43,9 +43,13 @@ export default class ReaderScreen extends React.Component<Props & NavigationScre
   render() {
     const { item } = this.props.navigation.state.params;
 
-    if (!isStoryItem(item) || !item.content) {
-      return null;
+    if (!isStoryItem(item)) {
+      return <Text>Item is not story item</Text>;
     }
+    if (!item.content) {
+      return <Text>No content in item</Text>;
+    }
+
     const { lead_image_url: header, content: html } = item.content;
 
     return (
