@@ -112,7 +112,7 @@ const renderWhileLoading = (component, propName = "data") =>
 
 const CommentsScreenConnected = graphql<Props, {}, {}, any>(
   gql`
-    query CommmentsQuery($storyId: Int!) {
+    query CommentsQuery($storyId: Int!) {
       item(id: $storyId) {
         ... on Story {
           id

@@ -11,9 +11,16 @@ export interface ListViewQuery_items_Comment {
   __typename: "Comment";
 }
 
+export interface ListViewQuery_items_Story_by_proofs {
+  __typename: "Proof";
+  key: string;
+  url: string;
+}
+
 export interface ListViewQuery_items_Story_by {
   __typename: "User";
   id: string;
+  proofs: ListViewQuery_items_Story_by_proofs[];
 }
 
 export interface ListViewQuery_items_Story_content {

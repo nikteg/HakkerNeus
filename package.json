@@ -6,16 +6,13 @@
     "start": "react-native start --config $(pwd)/rn-cli.config.js",
     "test": "jest",
     "tsc": "tsc",
-    "get-schema": "apollo codegen:introspect-schema http://localhost:3000/graphql --output ./src/types/schema.json",
+    "get-schema": "apollo schema:download --endpoint=http://localhost:3000/graphql ./src/types/schema.json",
     "generate-gql-types": "apollo codegen:generate --queries='src/**/{*.js,*.tsx,*.ts}' --addTypename --schema ./src/types/schema.json --target typescript _generated"
-  },
-  "resolutions": {
-    "graphql": "^0.13.0"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
     "apollo-link-error": "^1.1.1",
-    "graphql": "^14.0.2",
+    "graphql": "^0.13.0",
     "graphql-tag": "^2.8.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
