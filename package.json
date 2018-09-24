@@ -5,7 +5,12 @@
   "scripts": {
     "start": "react-native start --config $(pwd)/rn-cli.config.js",
     "test": "jest",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "get-schema": "apollo codegen:introspect-schema http://localhost:3000/graphql --output ./src/types/schema.json",
+    "generate-gql-types": "apollo codegen:generate --queries='src/**/{*.js,*.tsx,*.ts}' --addTypename --schema ./src/types/schema.json --target typescript _generated"
+  },
+  "resolutions": {
+    "graphql": "^0.13.0"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
@@ -33,6 +38,7 @@
     "@types/react-native": "^0.56.23",
     "@types/react-navigation": "^2.0.21",
     "@types/recompose": "^0.26.5",
+    "apollo": "^1.9.2",
     "babel-jest": "23.6.0",
     "babel-preset-react-native": "5.0.0",
     "jest": "23.6.0",
