@@ -7,23 +7,24 @@ import * as packageJson from "../../package.json";
 import ListView from "../ListView";
 import { Item, StoryItem } from "../../backend/src/typings/api";
 import { Share } from "react-native";
+import { ListViewQuery_items } from "../_generated/ListViewQuery";
 
 export default class HomeScreen extends React.Component<NavigationScreenProps> {
   static navigationOptions = {
-    title: `${packageJson.name} v${packageJson.version}`
+    title: `${packageJson.name} v${packageJson.version}`,
   };
 
-  navigateToItem = (item: Item) => {
+  navigateToItem = (item: ListViewQuery_items) => {
     this.props.navigation.navigate("Reader", { item });
   };
 
-  openShareSheet = (item: Item) => {
+  openShareSheet = (item: ListViewQuery_items) => {
     Share.share({
-      url: (item as StoryItem).url,
+      url: item.url!,
     });
   };
 
-  navigateToComments = (item: Item) => {
+  navigateToComments = (item: ListViewQuery_items) => {
     this.props.navigation.navigate("Comments", { storyId: item.id });
   };
 

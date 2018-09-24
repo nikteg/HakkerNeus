@@ -1,28 +1,31 @@
-import * as React from "react";
-import { NavigationScreenProps, NavigationStackScreenOptions } from "react-navigation";
-import { graphql, QueryProps, ChildProps } from "react-apollo";
 import gql from "graphql-tag";
-import { Item } from "../../backend/src/typings/api";
-import { Text, View, ScrollView, Linking, StyleSheet, TouchableOpacityComponent, TouchableOpacity } from "react-native";
-import HTML from "react-native-render-html";
 import moment from "moment";
+import * as React from "react";
+import { ChildProps, graphql, QueryProps } from "react-apollo";
+import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import HTML from "react-native-render-html";
 import Icon from "react-native-vector-icons/EvilIcons";
-import { branch, renderComponent, compose, hoistStatics } from "recompose";
-import { ProofsBar } from "../components/Proofs";
+import { NavigationScreenProps, NavigationStackScreenOptions } from "react-navigation";
+import { branch, compose, hoistStatics, renderComponent } from "recompose";
 
-type Response = {
-  item: any;
-};
+import { ListViewQuery_items } from "../_generated/ListViewQuery";
+import { ProofsBar } from "../components/Proofs";
+import {
+  CommentsQuery,
+  CommentsQuery_item_Story_kids,
+  CommentsQuery_item,
+  CommentsQuery_item_Story,
+} from "./_generated/CommentsQuery";
 
 type Props = {
-  item: Item;
+  item?: ListViewQuery_items;
   handleInternalLink: (url: string) => any;
 } & NavigationScreenProps &
   QueryProps;
 
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
-class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>> {
+class CommentsScreen extends React.Component<ChildProps<Props, CommentsQuery>> {
   static navigationOptions = ({
     navigation,
   }: NavigationScreenProps<{ title: string }>): NavigationStackScreenOptions => {
@@ -37,10 +40,11 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ title: "Comments for " + this.props.data.item!.title });
+    // TODO: Fix this
+    // this.props.navigation.setParams({ title: "Comments for " + this.props.item.title });
   }
 
-  renderKids = (kids, depth = 0) => {
+  renderKids = (kids: CommentsQuery_item_Story_kids[], depth = 0) => {
     if (!kids) {
       return null;
     }
@@ -92,23 +96,29 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
   };
 
   render() {
-    const { loading } = this.props.data;
+    const { data } = this.props;
 
-    console.log(this.props.data);
+    if (!data || !data.item) {
+      return <Text>Loading...</Text>;
+    }
 
-    if (!loading) {
-      const {
-        item: { kids },
-      } = this.props.data;
-      return <ScrollView style={{ backgroundColor: "#eee" }}>{this.renderKids(kids)}</ScrollView>;
+    // const { error, loading } = data;
+
+    if (data.item && isStoryWithKids(data.item)) {
+      return <ScrollView style={{ backgroundColor: "#eee" }}>{this.renderKids(data.item.kids)}</ScrollView>;
     } else {
       return <Text>loading</Text>;
     }
   }
 }
 
-const renderWhileLoading = (component, propName = "data") =>
-  branch((props) => props[propName] && props[propName].loading, renderComponent(component));
+function isStoryWithKids(story: CommentsQuery_item): story is CommentsQuery_item_Story {
+  return story.type === "story";
+}
+
+// TODO: Fix generics and shit
+const renderWhileLoading = (component: React.ComponentType<any>, propName: string = "data") =>
+  branch<any>((props) => props[propName] && props[propName].loading, renderComponent(component));
 
 const CommentsScreenConnected = graphql<Props, {}, {}, any>(
   gql`
@@ -118,18 +128,34 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
           id
           title
           kids {
-            id
-            text
-            time
-            by {
-              id
-              proofs {
-                key
-                url
-              }
-            }
+            ...CommentFragment
           }
           type
+        }
+        ... on JobStory {
+          id
+          title
+          type
+        }
+        ... on Comment {
+          id
+          kids {
+            ...CommentFragment
+          }
+          type
+        }
+      }
+    }
+
+    fragment CommentFragment on Comment {
+      id
+      text
+      time
+      by {
+        id
+        proofs {
+          key
+          url
         }
       }
     }
@@ -137,15 +163,17 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
   {
     options: (props) => {
       return {
-        variables: { storyId: props.navigation.state.params.storyId },
+        variables: { storyId: props.navigation.state.params!.storyId },
       };
     },
   },
 );
 
+const LoadingText: any = () => <Text>Loading</Text>;
+
 export default hoistStatics(
-  compose(
+  compose<any, any>(
     CommentsScreenConnected,
-    renderWhileLoading(() => <Text>Loading</Text>),
+    renderWhileLoading(LoadingText),
   ),
 )(CommentsScreen);

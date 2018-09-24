@@ -6,8 +6,9 @@ import gql from "graphql-tag";
 import { Item, StoryItem } from "../backend/src/typings/api";
 import moment from "moment";
 
-  import Icon from "react-native-vector-icons/Foundation";
+import Icon from "react-native-vector-icons/Foundation";
 import { ProofsBar } from "./components/Proofs";
+import { ListViewQuery, ListViewQuery_items } from "./_generated/ListViewQuery";
 
 const ListItem = styled.View`
   flex-direction: row;
@@ -46,7 +47,7 @@ type State = {
   refreshing: boolean;
 };
 
-class ListView extends React.Component<Props & ChildProps<Props, Response>, State> {
+class ListView extends React.Component<ChildProps<Props, ListViewQuery>, State> {
   state: State = {
     fetchingMore: false,
     refreshing: false,
@@ -59,7 +60,7 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
     }
     console.log("refreshing dispatched!");
     this.setState({ refreshing: true });
-    this.props.data.fetchMore({
+    this.props.data!.fetchMore({
       variables: {
         offset: 0,
       },
@@ -78,11 +79,12 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
       console.log("fetch more already in progress...");
       return;
     }
-    console.log("fetch more dispatched! offset:", this.props.data.items.length);
+    // TODO: Remove !
+    console.log("fetch more dispatched! offset:", this.props.data!.items!.length);
     this.setState({ fetchingMore: true });
-    this.props.data.fetchMore({
+    this.props.data!.fetchMore({
       variables: {
-        offset: this.props.data.items.length,
+        offset: this.props.data!.items!.length,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         this.setState({ fetchingMore: false });
@@ -94,7 +96,7 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
     });
   };
 
-  keyExtractor = (item: Item) => String(item.id);
+  keyExtractor = (item: ListViewQuery_items) => String(item.id);
 
   renderBottomLoader = () => {
     const { fetchingMore } = this.state;
@@ -106,20 +108,31 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
   };
 
   render() {
-    const {
-      data: { error, loading },
-    } = this.props;
+    const { data } = this.props;
+
+    if (!data) {
+      return <Text>Loading...</Text>;
+    }
+
+    const { error, loading } = data;
+
     const { refreshing } = this.state;
+
     if (error) {
       return (
         <ScrollView>
-          <Text>{JSON.stringify(this.props.data.error, null, 2)}</Text>
+          <Text>{JSON.stringify(error, null, 2)}</Text>
         </ScrollView>
       );
     }
+
+    if (!data.items) {
+      return <Text>Loading...</Text>;
+    }
+
     return (
       <FlatList
-        data={this.props.data.items}
+        data={data.items}
         ListFooterComponent={this.renderBottomLoader}
         refreshing={loading || refreshing}
         onEndReached={this.endReached}
@@ -130,15 +143,7 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
     );
   }
 
-  private renderProofLogos = (item: any, color: string) => (
-    <>
-      {item.by.proofs.filter(p => p.key !== 'hackernews').map((proof) => (
-        <Icon name={`social-${proof.key}`} color={color} />
-      ))}
-    </>
-  );
-
-  private renderItem = ({ item, index }) => (
+  private renderItem = ({ item, index }: { item: ListViewQuery_items; index: number }) => (
     <ListItem>
       <Number>{index + 1}</Number>
       <ItemContainer onPress={() => this.props.onPress(item)} onLongPress={() => this.props.onLongPress(item)}>
@@ -166,50 +171,33 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
   );
 }
 
-type Response = {
-  items: StoryItem[];
-};
-
 type Props = {
-  onPress: (item: Item) => void;
-  onLongPress: (item: Item) => void;
-  onPressComment: (item: Item) => void;
+  onPress: (item: ListViewQuery_items) => void;
+  onLongPress: (item: ListViewQuery_items) => void;
+  onPressComment: (item: ListViewQuery_items) => void;
 };
 
-const ListViewConnected = graphql<Props>(
+const ListViewConnected = graphql<Props, ListViewQuery>(
   gql`
     query ListViewQuery($offset: Int!) {
       items: topstories(first: 15, offset: $offset) {
-        ... on Story {
+        id
+        score
+        time
+        by {
           id
-          score
-          time
-          by {
-            id
-            proofs {
-              key
-              url
-            }
-          }
-          title
-          url
-          type
-          descendants
-          content {
-            content
-            lead_image_url
+          proofs {
+            key
+            url
           }
         }
-        ... on JobStory {
-          id
-          score
-          by {
-            id
-          }
-          title
-          time
-          url
-          type
+        title
+        url
+        type
+        descendants
+        content {
+          content
+          lead_image_url
         }
       }
     }

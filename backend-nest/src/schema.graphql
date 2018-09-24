@@ -1,5 +1,5 @@
 type Query {
-  topstories(first: Int, offset: Int): [Item!]
+  topstories(first: Int, offset: Int): [Story!]!
   item(id: Int!): Item
   user(id: String!): User
 }
@@ -14,7 +14,7 @@ enum ItemType {
 
 interface Item {
   by: User
-  type: ItemType
+  type: ItemType!
   id: Int!
   url: String
   time: Int!
@@ -23,8 +23,8 @@ interface Item {
 }
 
 type JobStory implements Item {
-  by: User
-  type: ItemType
+  by: User!
+  type: ItemType!
   id: Int!
   url: String
   time: Int!
@@ -34,29 +34,29 @@ type JobStory implements Item {
 }
 
 type Story implements Item {
-  by: User
-  type: ItemType
+  by: User!
+  type: ItemType!
   id: Int!
   url: String
   time: Int!
   text: String
   title: String
   descendants: Int
-  kids: [Comment!]
+  kids: [Comment!]!
   score: Int!
   content: ReadabilityResponse
 }
 
 type Comment implements Item {
   by: User
-  type: ItemType
+  type: ItemType!
   id: Int!
   url: String
   time: Int!
   text: String
   title: String
   descendants: Int!
-  kids: [Comment!]
+  kids: [Comment!]!
   attributes: CommentAttributes
 }
 

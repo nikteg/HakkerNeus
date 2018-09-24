@@ -2,9 +2,10 @@ import * as React from "react";
 import Icon from "react-native-vector-icons/Foundation";
 import { sortBy } from "lodash";
 import { Text } from "react-native";
+import { ListViewQuery_items_by_proofs } from "../_generated/ListViewQuery";
 
 type Props = {
-  proofs: any;
+  proofs: ListViewQuery_items_by_proofs[] | null;
   color: string;
 };
 
@@ -17,10 +18,10 @@ export const ProofsBar = ({ proofs, color }: Props) => {
 
   return (
     <>
-      {proofsToShow.map(({ key }, index) => (
+      {proofsToShow.map(({ key }) => (
         <Text key={key}>
-          <Icon name={`social-${key}`} color={color} />
-          {index !== proofsToShow.length - 1 && "  "}
+          {" "}
+          <Icon name={key === "generic_web_site" ? "web" : `social-${key}`} color={color} size={16} />
         </Text>
       ))}
     </>
