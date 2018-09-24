@@ -6,7 +6,8 @@ import gql from "graphql-tag";
 import { Item, StoryItem } from "../backend/src/typings/api";
 import moment from "moment";
 
-import Icon from "react-native-vector-icons/Foundation";
+  import Icon from "react-native-vector-icons/Foundation";
+import { ProofsBar } from "./components/Proofs";
 
 const ListItem = styled.View`
   flex-direction: row;
@@ -129,6 +130,14 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
     );
   }
 
+  private renderProofLogos = (item: any, color: string) => (
+    <>
+      {item.by.proofs.filter(p => p.key !== 'hackernews').map((proof) => (
+        <Icon name={`social-${proof.key}`} color={color} />
+      ))}
+    </>
+  );
+
   private renderItem = ({ item, index }) => (
     <ListItem>
       <Number>{index + 1}</Number>
@@ -143,7 +152,7 @@ class ListView extends React.Component<Props & ChildProps<Props, Response>, Stat
           <Text style={{ fontSize: 16 }}>{item.title}</Text>
         </Title>
         <Text style={{ color: "#666666" }}>
-          {item.by.id}
+          {item.by.id} <ProofsBar proofs={item.by.proofs} color="#666666" />
           {item.url && " — " + item.url}
         </Text>
       </ItemContainer>

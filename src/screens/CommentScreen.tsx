@@ -8,6 +8,7 @@ import HTML from "react-native-render-html";
 import moment from "moment";
 import Icon from "react-native-vector-icons/EvilIcons";
 import { branch, renderComponent, compose, hoistStatics } from "recompose";
+import { ProofsBar } from "../components/Proofs";
 
 type Response = {
   item: any;
@@ -22,10 +23,16 @@ type Props = {
 const COLORS = ["transparent", "#F44336", "#2196F3", "#8BC34A", "#FF5722", "#CDDC39"];
 
 class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>> {
-  static navigationOptions = ({ navigation }: NavigationScreenProps<{ title: string }>): NavigationStackScreenOptions => {
+  static navigationOptions = ({
+    navigation,
+  }: NavigationScreenProps<{ title: string }>): NavigationStackScreenOptions => {
     return {
       title: navigation.getParam("title", "Comments"),
-      headerRight: <TouchableOpacity><Icon name="share-apple" color="#007AFF" size={40} /></TouchableOpacity>
+      headerRight: (
+        <TouchableOpacity>
+          <Icon name="share-apple" color="#007AFF" size={40} />
+        </TouchableOpacity>
+      ),
     };
   };
 
@@ -58,7 +65,7 @@ class CommentsScreen extends React.Component<Props & ChildProps<Props, Response>
                 paddingBottom: 10,
               }}
             >
-              {comment.by.id}
+              {comment.by.id} <ProofsBar proofs={comment.by.proofs} color="#666666" />
               <Text
                 style={{
                   color: "#666666",
@@ -116,6 +123,10 @@ const CommentsScreenConnected = graphql<Props, {}, {}, any>(
             time
             by {
               id
+              proofs {
+                key
+                url
+              }
             }
           }
           type
