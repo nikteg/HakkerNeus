@@ -177,6 +177,10 @@ const ListViewConnected = graphql<Props>(
           time
           by {
             id
+            proofs {
+              key
+              url
+            }
           }
           title
           url
