@@ -4,39 +4,40 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: ListViewQuery
+// GraphQL query operation: ReaderQuery
 // ====================================================
 
-export interface ListViewQuery_items_by_proofs {
-  __typename: "Proof";
-  key: string;
-  url: string;
-}
-
-export interface ListViewQuery_items_by {
-  __typename: "User";
-  id: string;
-  proofs: ListViewQuery_items_by_proofs[];
-}
-
-export interface ListViewQuery_items {
-  __typename: "Story";
+export interface ReaderQuery_item_Comment {
+  __typename: "Comment" | "JobStory";
   id: number;
-  score: number;
-  time: number;
-  by: ListViewQuery_items_by;
-  title: string | null;
   url: string | null;
   type: ItemType;
-  descendants: number | null;
+  title: string | null;
 }
 
-export interface ListViewQuery {
-  items: ListViewQuery_items[];
+export interface ReaderQuery_item_Story_content {
+  __typename: "ReadabilityResponse";
+  lead_image_url: string | null;
+  content: string;
 }
 
-export interface ListViewQueryVariables {
-  offset: number;
+export interface ReaderQuery_item_Story {
+  __typename: "Story";
+  id: number;
+  url: string | null;
+  type: ItemType;
+  title: string | null;
+  content: ReaderQuery_item_Story_content | null;
+}
+
+export type ReaderQuery_item = ReaderQuery_item_Comment | ReaderQuery_item_Story;
+
+export interface ReaderQuery {
+  item: ReaderQuery_item | null;
+}
+
+export interface ReaderQueryVariables {
+  id: number;
 }
 
 /* tslint:disable */

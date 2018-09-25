@@ -1,7 +1,7 @@
+
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
-
-import { ItemType } from "./../../../_generated/globalTypes";
 
 // ====================================================
 // GraphQL query operation: CommentsQuery
@@ -78,3 +78,22 @@ export interface CommentsQuery {
 export interface CommentsQueryVariables {
   storyId: number;
 }
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum ItemType {
+  comment = "comment",
+  job = "job",
+  poll = "poll",
+  pollopt = "pollopt",
+  story = "story",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================

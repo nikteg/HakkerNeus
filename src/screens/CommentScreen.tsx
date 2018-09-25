@@ -69,7 +69,7 @@ class CommentsScreen extends React.Component<ChildProps<Props, CommentsQuery>> {
                 paddingBottom: 10,
               }}
             >
-              {comment.by.id} <ProofsBar proofs={comment.by.proofs} color="#666666" />
+              {comment.by!.id} <ProofsBar proofs={comment.by!.proofs} color="#666666" />
               <Text
                 style={{
                   color: "#666666",
@@ -81,7 +81,6 @@ class CommentsScreen extends React.Component<ChildProps<Props, CommentsQuery>> {
             </Text>
             <HTML html={comment.text} onLinkPress={this.handlePressLink} />
           </View>
-          {this.renderKids(comment.kids, depth + 1)}
         </React.Fragment>
       );
     });

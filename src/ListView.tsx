@@ -195,10 +195,6 @@ const ListViewConnected = graphql<Props, ListViewQuery>(
         url
         type
         descendants
-        content {
-          content
-          lead_image_url
-        }
       }
     }
   `,

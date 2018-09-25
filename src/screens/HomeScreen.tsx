@@ -1,11 +1,9 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-
 // @ts-ignore
 import * as packageJson from "../../package.json";
 
 import ListView from "../ListView";
-import { Item, StoryItem } from "../../backend/src/typings/api";
 import { Share } from "react-native";
 import { ListViewQuery_items } from "../_generated/ListViewQuery";
 
@@ -15,7 +13,7 @@ export default class HomeScreen extends React.Component<NavigationScreenProps> {
   };
 
   navigateToItem = (item: ListViewQuery_items) => {
-    this.props.navigation.navigate("Reader", { item });
+    this.props.navigation.navigate("Reader", { storyId: item.id });
   };
 
   openShareSheet = (item: ListViewQuery_items) => {
