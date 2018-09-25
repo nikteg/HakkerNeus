@@ -49,7 +49,7 @@ class CommentsScreen extends React.Component<ChildProps<Props, CommentsQuery>> {
       return null;
     }
 
-    return kids.filter((comment) => comment.text).map((comment: any) => {
+    return kids.filter((comment) => comment.text).map((comment) => {
       return (
         <React.Fragment key={comment.id}>
           <View
