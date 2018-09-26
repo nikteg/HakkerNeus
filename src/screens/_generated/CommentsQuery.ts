@@ -1,7 +1,7 @@
-
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
+
+import { ItemType } from "./../../../_generated/globalTypes";
 
 // ====================================================
 // GraphQL query operation: CommentsQuery
@@ -29,9 +29,9 @@ export interface CommentsQuery_item_Story_kids {
 
 export interface CommentsQuery_item_Story {
   __typename: "Story";
+  kids: CommentsQuery_item_Story_kids[];
   id: number;
   title: string | null;
-  kids: CommentsQuery_item_Story_kids[];
   type: ItemType;
 }
 
@@ -64,8 +64,8 @@ export interface CommentsQuery_item_Comment_kids {
 
 export interface CommentsQuery_item_Comment {
   __typename: "Comment";
-  id: number;
   kids: CommentsQuery_item_Comment_kids[];
+  id: number;
   type: ItemType;
 }
 
@@ -78,22 +78,3 @@ export interface CommentsQuery {
 export interface CommentsQueryVariables {
   storyId: number;
 }
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-//==============================================================
-// START Enums and Input Objects
-//==============================================================
-
-export enum ItemType {
-  comment = "comment",
-  job = "job",
-  poll = "poll",
-  pollopt = "pollopt",
-  story = "story",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================
